@@ -1,0 +1,65 @@
+[33mcommit 5c1d1da94608f2d981bb3386d9dfffb524db183d[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m
+Author: Jay <jsjaiho5@gmail.com>
+Date:   Fri Dec 20 18:43:39 2024 +0530
+
+    Persona amd compatibility analysis DUmmy working-Build Errors Fixed
+
+[33mcommit 4a837d2f134839d6c60c0c58afd4bb0bec9d21aa[m
+Author: Jay <jsjaiho5@gmail.com>
+Date:   Fri Dec 20 17:55:46 2024 +0530
+
+    Persona amd compatibility analysis DUmmy working
+
+[33mcommit fedff18f8cf46c3e1fe737248bb989dfdb755d24[m
+Author: Jay <jsjaiho5@gmail.com>
+Date:   Wed Dec 18 19:18:18 2024 +0530
+
+    Vercel Deployment Error Fix by npm run build on cursor
+
+[33mcommit 3a11c464aca41fad3cf249987e8c456139037bbf[m
+Author: Jay <jsjaiho5@gmail.com>
+Date:   Wed Dec 18 11:56:47 2024 +0530
+
+    ALL WORKING-Persona and compatibility basic
+
+[33mcommit 80ab1563df9319c64417aef9792492fd77ef8bc3[m
+Author: Jay <jsjaiho5@gmail.com>
+Date:   Wed Dec 18 03:42:27 2024 +0530
+
+    Fix TypeScript errors and prepare for deployment6
+
+[33mcommit 97949095464be6dbe9e288cf17ffb1ce316aae98[m
+Author: Jay <jsjaiho5@gmail.com>
+Date:   Wed Dec 18 03:33:12 2024 +0530
+
+    Fix TypeScript errors and prepare for deployment5
+
+[33mcommit 2bd5ff3a57e5eaa3237b36c4f8de7f5031e582b5[m
+Author: Jay <jsjaiho5@gmail.com>
+Date:   Wed Dec 18 03:24:22 2024 +0530
+
+    Fix TypeScript errors and prepare for deployment4
+
+[33mcommit 88de3f70edfc1721b5c64ff2cd489b3a4f8329e0[m
+Author: Jay <jsjaiho5@gmail.com>
+Date:   Wed Dec 18 03:14:43 2024 +0530
+
+    Fix TypeScript errors and prepare for deployment3
+
+[33mcommit 25c9f4ca0835537c3de21431626118761caac7ec[m
+Author: Jay <jsjaiho5@gmail.com>
+Date:   Wed Dec 18 02:47:26 2024 +0530
+
+    Fix TypeScript errors and prepare for deployment
+
+[33mcommit d02d2620428aab85f317ba692b27415525ce1ade[m
+Author: Jay <jsjaiho5@gmail.com>
+Date:   Wed Dec 18 02:30:38 2024 +0530
+
+    Fix TypeScript errors and prepare for deployment
+
+[33mcommit 6e3c87d76966f226db46f2447ae8743573b57a71[m
+Author: Jay <jsjaiho5@gmail.com>
+Date:   Wed Dec 18 01:52:44 2024 +0530
+
+    Fresh start without sensitive data

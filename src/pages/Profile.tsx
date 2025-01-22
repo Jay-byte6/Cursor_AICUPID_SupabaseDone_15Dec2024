@@ -98,35 +98,39 @@ const Profile = () => {
     if (!aspect) return null;
 
     return (
-      <div className="mb-6">
-        <h4 className="text-lg font-semibold text-gray-800 mb-3">{title}</h4>
+      <div className="mb-16">
         {aspect.traits.length > 0 ? (
-          <div className="space-y-3">
+          <div className="space-y-16">
             {aspect.traits.map((trait, index) => (
-              <div key={index} className="bg-white rounded-lg p-4 shadow-sm">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="font-medium text-gray-700">{trait}</span>
+              <div key={index} className="bg-white rounded-xl p-16 shadow-xl hover:shadow-2xl transition-shadow duration-300">
+                <div className="flex items-center justify-between mb-10">
+                  <span className="font-bold text-[120px] text-gray-800 drop-shadow-md leading-none">{trait}</span>
                   {aspect.intensity && (
-                    <span className="text-sm text-indigo-600 font-medium">
+                    <span className="text-[100px] text-pink-500 font-bold drop-shadow-md">
                       {aspect.intensity}%
                     </span>
                   )}
                 </div>
                 {aspect.examples[index] && (
-                  <p className="text-sm text-gray-600">
-                    Example: {aspect.examples[index]}
-                  </p>
+                  <div className="mt-10">
+                    <span className="text-[80px] font-semibold text-pink-500 block mb-6">Example:</span>
+                    <p className="text-[64px] text-gray-700 leading-tight mt-6">
+                      {aspect.examples[index]}
+                    </p>
+                  </div>
                 )}
               </div>
             ))}
             {aspect.summary && (
-              <p className="text-sm text-gray-600 mt-2 italic">
-                {aspect.summary}
-              </p>
+              <div className="bg-pink-50 p-12 rounded-xl border-2 border-pink-100 shadow-lg">
+                <p className="text-[64px] text-gray-700 leading-tight italic">
+                  {aspect.summary}
+                </p>
+              </div>
             )}
           </div>
         ) : (
-          <p className="text-gray-500 italic">No traits available</p>
+          <p className="text-[64px] text-gray-500 italic">No traits available</p>
         )}
       </div>
     );
@@ -246,17 +250,17 @@ const Profile = () => {
           <div className="flex-1">
             <div className="flex justify-between">
               <div>
-                <h1 className="text-2xl font-bold text-gray-900 mb-1">
+                <h1 className="text-4xl font-bold text-gray-900 mb-2">
                   {userProfile?.fullname || 'Anonymous User'}
                 </h1>
                 <div className="flex items-center text-gray-600 mb-4">
-                  <MapPin className="w-4 h-4 mr-1" />
-                  {userProfile?.location || 'Location hidden'}
+                  <MapPin className="w-5 h-5 mr-2 text-pink-500" />
+                  <span className="text-lg">{userProfile?.location || 'Location hidden'}</span>
                 </div>
               </div>
               <div className="text-right">
-                <div className="text-sm text-gray-600 mb-1">CUPID ID</div>
-                <div className="font-mono text-lg font-semibold text-indigo-600">
+                <div className="text-base text-gray-600 mb-1">CUPID ID</div>
+                <div className="font-mono text-xl font-semibold text-pink-500">
                   {userProfile?.cupid_id || 'Not Generated'}
                 </div>
               </div>
@@ -265,22 +269,22 @@ const Profile = () => {
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <div className="flex items-center text-gray-600">
-                  <Mail className="w-4 h-4 mr-2" />
-                  {isOwnProfile ? user?.email : 'Email hidden'}
+                  <Mail className="w-5 h-5 mr-2 text-pink-500" />
+                  <span className="text-lg">{isOwnProfile ? user?.email : 'Email hidden'}</span>
                 </div>
-                <div className="flex items-center text-gray-600 mt-2">
-                  <Briefcase className="w-4 h-4 mr-2" />
-                  {userProfile?.occupation || 'Occupation hidden'}
+                <div className="flex items-center text-gray-600 mt-3">
+                  <Briefcase className="w-5 h-5 mr-2 text-pink-500" />
+                  <span className="text-lg">{userProfile?.occupation || 'Occupation hidden'}</span>
                 </div>
               </div>
               <div>
                 <div className="flex items-center text-gray-600">
-                  <Heart className="w-4 h-4 mr-2" />
-                  {userProfile?.relationship_history || 'Relationship history hidden'}
+                  <Heart className="w-5 h-5 mr-2 text-pink-500" />
+                  <span className="text-lg">{userProfile?.relationship_history || 'Relationship history hidden'}</span>
                 </div>
-                <div className="flex items-center text-gray-600 mt-2">
-                  <Brain className="w-4 h-4 mr-2" />
-                  {userProfile?.lifestyle || 'Lifestyle hidden'}
+                <div className="flex items-center text-gray-600 mt-3">
+                  <Brain className="w-5 h-5 mr-2 text-pink-500" />
+                  <span className="text-lg">{userProfile?.lifestyle || 'Lifestyle hidden'}</span>
                 </div>
               </div>
             </div>
@@ -292,50 +296,50 @@ const Profile = () => {
         <GeneratePersonaButton />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
+      <div className="grid grid-cols-1 gap-16 mt-16">
         {/* Positive Traits & Characteristics */}
-        <div className="bg-white rounded-xl p-6 shadow-lg">
-          <h3 className="text-xl font-bold text-green-600 mb-6">
+        <div className="bg-white rounded-xl p-16 shadow-xl border-4 border-pink-500/30 hover:border-pink-500/50 transition-all duration-300">
+          <h3 className="text-[100px] font-bold text-pink-500 mb-16 text-center leading-tight">
             Positive Traits & Characteristics
           </h3>
           {isLoadingAnalysis ? (
-            <div className="flex justify-center items-center h-32">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600"></div>
+            <div className="flex justify-center items-center h-48">
+              <div className="animate-spin rounded-full h-24 w-24 border-b-8 border-pink-600"></div>
             </div>
           ) : analysisError ? (
-            <div className="text-red-500 text-center">{analysisError}</div>
+            <div className="text-red-500 text-center text-[64px]">{analysisError}</div>
           ) : personaAnalysis?.positivePersona ? (
             <>
-              {renderPersonaSection('Personality Traits', personaAnalysis.positivePersona.personality_traits)}
-              {renderPersonaSection('Core Values', personaAnalysis.positivePersona.core_values)}
-              {renderPersonaSection('Behavioral Traits', personaAnalysis.positivePersona.behavioral_traits)}
-              {renderPersonaSection('Hobbies & Interests', personaAnalysis.positivePersona.hobbies_interests)}
+              {renderPersonaSection('', personaAnalysis.positivePersona.personality_traits)}
+              {renderPersonaSection('', personaAnalysis.positivePersona.core_values)}
+              {renderPersonaSection('', personaAnalysis.positivePersona.behavioral_traits)}
+              {renderPersonaSection('', personaAnalysis.positivePersona.hobbies_interests)}
             </>
           ) : (
-            <div className="text-gray-500 text-center">No analysis available</div>
+            <div className="text-gray-500 text-center text-[64px]">No analysis available</div>
           )}
         </div>
 
         {/* Growth Areas & Challenges */}
-        <div className="bg-white rounded-xl p-6 shadow-lg">
-          <h3 className="text-xl font-bold text-red-600 mb-6">
+        <div className="bg-white rounded-xl p-16 shadow-xl border-4 border-pink-500/30 hover:border-pink-500/50 transition-all duration-300">
+          <h3 className="text-[100px] font-bold text-pink-500 mb-16 text-center leading-tight">
             Growth Areas & Challenges
           </h3>
           {isLoadingAnalysis ? (
-            <div className="flex justify-center items-center h-32">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-red-600"></div>
+            <div className="flex justify-center items-center h-48">
+              <div className="animate-spin rounded-full h-24 w-24 border-b-8 border-pink-600"></div>
             </div>
           ) : analysisError ? (
-            <div className="text-red-500 text-center">{analysisError}</div>
+            <div className="text-red-500 text-center text-[64px]">{analysisError}</div>
           ) : personaAnalysis?.negativePersona ? (
             <>
-              {renderPersonaSection('Emotional Aspects', personaAnalysis.negativePersona.emotional_aspects)}
-              {renderPersonaSection('Social Aspects', personaAnalysis.negativePersona.social_aspects)}
-              {renderPersonaSection('Lifestyle Aspects', personaAnalysis.negativePersona.lifestyle_aspects)}
-              {renderPersonaSection('Relational Aspects', personaAnalysis.negativePersona.relational_aspects)}
+              {renderPersonaSection('', personaAnalysis.negativePersona.emotional_aspects)}
+              {renderPersonaSection('', personaAnalysis.negativePersona.social_aspects)}
+              {renderPersonaSection('', personaAnalysis.negativePersona.lifestyle_aspects)}
+              {renderPersonaSection('', personaAnalysis.negativePersona.relational_aspects)}
             </>
           ) : (
-            <div className="text-gray-500 text-center">No analysis available</div>
+            <div className="text-gray-500 text-center text-[64px]">No analysis available</div>
           )}
         </div>
       </div>

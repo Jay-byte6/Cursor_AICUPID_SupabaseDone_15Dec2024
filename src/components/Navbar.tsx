@@ -1,20 +1,23 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { useTheme } from '../contexts/ThemeContext';
 import NotificationCenter from './notifications/NotificationCenter';
-import { UserCircle, Heart, X } from 'lucide-react';
+import { UserCircle, Heart, X, Menu, Bell, User } from 'lucide-react';
 import FavoriteProfiles from './profile/FavoriteProfiles';
 import AICupidLogo from '../assets/AICupidLogo';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const Navbar = () => {
   const { user, signOut } = useAuth();
+  const { colors } = useTheme();
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   const [showFavorites, setShowFavorites] = useState(false);
   const [showLogoAnimation, setShowLogoAnimation] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const location = useLocation();
   const navigate = useNavigate();
+  const [isOpen, setIsOpen] = useState(false);
 
   const handleSignOut = async () => {
     try {
@@ -55,40 +58,51 @@ const Navbar = () => {
     return null;
   }
 
+  const primaryColor = colors.primary === 'pink-500' ? 'pink-500' : 'blue-500';
+  const hoverColor = colors.hover === 'pink-600' ? 'pink-600' : 'blue-600';
+  const lightColor = colors.light === 'pink-50' ? 'pink-50' : 'blue-50';
+
   return (
     <>
-      <nav className="bg-white shadow-sm">
-        <div className="container mx-auto px-4">
+      <nav className={`bg-white shadow-sm border-b ${colors.light === 'pink-50' ? 'border-pink-100' : 'border-blue-100'}`}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex items-center">
-              <Link to="/home" className="flex items-center space-x-3 hover:opacity-90 transition-opacity">
-                <div className="w-12 h-12 relative">
-                  <AICupidLogo className="transform hover:scale-100 transition-transform" size={55} />
+              <Link to="/home" className="flex items-center space-x-3">
+                <div className="w-10 h-10">
+                  <AICupidLogo className={`text-${primaryColor}`} />
                 </div>
-                <span className="text-xl font-bold bg-gradient-to-r from-purple-600 to-pink-500 bg-clip-text text-transparent">
+                <span className={`text-xl font-bold text-${primaryColor}`}>
                   AI CUPID
                 </span>
               </Link>
+
               {user && (
                 <div className="hidden md:ml-6 md:flex md:space-x-4">
                   <Link
                     to="/personality-analysis"
-                    className="text-gray-700 hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium"
+                    className={`text-gray-700 hover:text-${primaryColor} px-3 py-2 rounded-md text-sm font-medium`}
                   >
                     Personality Analysis
                   </Link>
                   <Link
                     to="/smart-matching"
                     onClick={handleSmartMatchingClick}
-                    className="text-gray-700 hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium"
+                    className={`text-gray-700 hover:text-${primaryColor} px-3 py-2 rounded-md text-sm font-medium`}
                   >
                     Smart Matching
                   </Link>
                   <Link
                     to="/relationship-insights"
-                    className="text-gray-700 hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium"
+                    className={`text-gray-700 hover:text-${primaryColor} px-3 py-2 rounded-md text-sm font-medium`}
                   >
                     Relationship Insights
+                  </Link>
+                  <Link
+                    to="/pricing"
+                    className={`text-gray-700 hover:text-${primaryColor} px-3 py-2 rounded-md text-sm font-medium`}
+                  >
+                    Pricing
                   </Link>
                 </div>
               )}
@@ -98,67 +112,103 @@ const Navbar = () => {
               {user ? (
                 <>
                   <button
-                    onClick={() => setShowFavorites(true)}
-                    className="text-gray-700 hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium"
+                    className={`p-2 rounded-full text-gray-600 hover:text-${primaryColor} focus:outline-none`}
                   >
-                    <Heart className="w-5 h-5" />
+                    <Bell className="h-6 w-6" />
                   </button>
 
                   <NotificationCenter />
 
-                  <div className="relative" ref={menuRef}>
-                    <button
-                      onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
-                      className="flex items-center text-gray-700 hover:text-indigo-600 px-3 py-2"
-                    >
-                      <UserCircle className="w-6 h-6" />
-                    </button>
+                  <div className="ml-3 relative">
+                    <div>
+                      <button
+                        onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
+                        className={`flex text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-${primaryColor}`}
+                      >
+                        {user.profile_image ? (
+                          <img
+                            className="h-8 w-8 rounded-full"
+                            src={user.profile_image}
+                            alt={user.fullname || 'User'}
+                          />
+                        ) : (
+                          <div className={`h-8 w-8 rounded-full bg-${primaryColor} flex items-center justify-center text-white`}>
+                            <User className="h-5 w-5" />
+                          </div>
+                        )}
+                      </button>
+                    </div>
 
                     {isProfileMenuOpen && (
-                      <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10">
-                        <Link
-                          to="/profile"
-                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50"
-                          onClick={() => setIsProfileMenuOpen(false)}
-                        >
-                          My Profile
-                        </Link>
-                        <Link
-                          to="/settings"
-                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50"
-                          onClick={() => setIsProfileMenuOpen(false)}
-                        >
-                          Settings
-                        </Link>
-                        <button
-                          onClick={() => {
-                            setIsProfileMenuOpen(false);
-                            handleSignOut();
-                          }}
-                          className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50"
-                        >
-                          Sign Out
-                        </button>
+                      <div className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
+                        <div className="py-1">
+                          <Link
+                            to="/profile"
+                            className={`block px-4 py-2 text-sm text-gray-700 hover:bg-${lightColor}`}
+                            onClick={() => setIsProfileMenuOpen(false)}
+                          >
+                            <div className="flex items-center gap-2">
+                              <div className="text-right mr-2">
+                                <div className="text-sm font-medium text-gray-700">
+                                  {user?.user_metadata?.fullName || 'User'}
+                                </div>
+                                <div className="text-xs text-gray-500">
+                                  {user?.user_metadata?.cupidId}
+                                </div>
+                              </div>
+                            </div>
+                          </Link>
+                          <Link
+                            to="/settings"
+                            className={`block px-4 py-2 text-sm text-gray-700 hover:bg-${lightColor}`}
+                            onClick={() => setIsProfileMenuOpen(false)}
+                          >
+                            Settings
+                          </Link>
+                          <button
+                            onClick={() => {
+                              setIsProfileMenuOpen(false);
+                              handleSignOut();
+                            }}
+                            className={`block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-${lightColor}`}
+                          >
+                            Sign Out
+                          </button>
+                        </div>
                       </div>
                     )}
                   </div>
                 </>
               ) : (
-                <>
+                <div className="flex items-center space-x-4">
                   <Link
                     to="/login"
-                    className="text-gray-700 hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium"
+                    className={`text-gray-700 hover:text-${primaryColor} px-3 py-2 rounded-md text-sm font-medium`}
                   >
                     Login
                   </Link>
                   <Link
                     to="/signup"
-                    className="bg-indigo-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-indigo-700"
+                    className={`bg-${primaryColor} text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-${hoverColor}`}
                   >
                     Sign Up
                   </Link>
-                </>
+                </div>
               )}
+
+              {/* Mobile menu button */}
+              <div className="flex items-center sm:hidden">
+                <button
+                  onClick={() => setIsOpen(!isOpen)}
+                  className={`inline-flex items-center justify-center p-2 rounded-md text-gray-700 hover:text-${primaryColor} focus:outline-none`}
+                >
+                  {isOpen ? (
+                    <X className="block h-6 w-6" />
+                  ) : (
+                    <Menu className="block h-6 w-6" />
+                  )}
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -256,6 +306,42 @@ const Navbar = () => {
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Mobile menu */}
+      {isOpen && (
+        <div className="sm:hidden">
+          <div className="pt-2 pb-3 space-y-1">
+            {user && (
+              <>
+                <Link
+                  to="/personality-analysis"
+                  className={`block px-3 py-2 text-base font-medium text-gray-700 hover:text-${primaryColor}`}
+                >
+                  Personality Analysis
+                </Link>
+                <Link
+                  to="/smart-matching"
+                  className={`block px-3 py-2 text-base font-medium text-gray-700 hover:text-${primaryColor}`}
+                >
+                  Smart Matching
+                </Link>
+                <Link
+                  to="/relationship-insights"
+                  className={`block px-3 py-2 text-base font-medium text-gray-700 hover:text-${primaryColor}`}
+                >
+                  Relationship Insights
+                </Link>
+                <Link
+                  to="/pricing"
+                  className={`block px-3 py-2 text-base font-medium text-gray-700 hover:text-${primaryColor}`}
+                >
+                  Pricing
+                </Link>
+              </>
+            )}
           </div>
         </div>
       )}

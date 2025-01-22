@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, Check } from 'lucide-react';
+import { motion } from 'framer-motion';
 import PersonalInfo from '../components/analysis/PersonalInfo';
 import Preferences from '../components/analysis/Preferences';
 import PsychologicalProfile from '../components/analysis/PsychologicalProfile';
 import RelationshipGoals from '../components/analysis/RelationshipGoals';
 import BehavioralInsights from '../components/analysis/BehavioralInsights';
 import Dealbreakers from '../components/analysis/Dealbreakers';
+import AssessmentSummary from '../components/assessment/AssessmentSummary';
 import ErrorAlert from '../components/ErrorAlert';
 import { useAuth } from '../contexts/AuthContext';
 import { profileService } from '../services/supabaseService';
@@ -249,39 +251,53 @@ const PersonalityAnalysis = () => {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-4xl">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-800 mb-4">
-          {SECTION_TITLES[currentSection]}
-        </h1>
-        <p className="text-gray-600">Complete this assessment to find your perfect match</p>
-      </div>
-
-      {error && <ErrorAlert message={error} onClose={() => setError(null)} />}
-
-      {/* Form Content */}
-      <div className="bg-white rounded-xl shadow-lg p-6 mb-8">
-        {renderAssessment()}
-      </div>
-
-      {/* Navigation Buttons */}
-      <div className="flex justify-between">
-        <button
-          onClick={handleBackToAssessments}
-          className="flex items-center px-6 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700"
+    <div className="min-h-screen bg-white">
+      <div className="container mx-auto px-4 py-12 ml-[240px]">
+        {/* Header Section */}
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-8"
         >
-          <ArrowLeft className="w-5 h-5 mr-2" />
-          Back to Assessments
-        </button>
-        
-        <button
-          onClick={handleSaveAndContinue}
-          disabled={isSaving}
-          className="flex items-center px-6 py-3 bg-pink-600 text-white rounded-lg hover:bg-pink-700 disabled:bg-pink-400"
-        >
-          {isSaving ? 'Saving...' : 'Save & Continue'}
-          <Check className="w-5 h-5 ml-2" />
-        </button>
+          <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-pink-500 to-pink-600 bg-clip-text text-transparent">
+            {SECTION_TITLES[currentSection]}
+          </h1>
+          <p className="text-lg text-gray-700 font-medium">
+            Complete this assessment to find your perfect match
+          </p>
+        </motion.div>
+
+        {error && <ErrorAlert message={error} onClose={() => setError(null)} />}
+
+        {/* Assessment Summary */}
+        <AssessmentSummary data={profile} currentSection={currentSection} />
+
+        {/* Form Content */}
+        <div className="bg-white rounded-2xl shadow-lg p-8 mb-8 border-4 border-pink-500/30 hover:border-pink-500/50 transition-all duration-300">
+          {renderAssessment()}
+        </div>
+
+        {/* Navigation Buttons */}
+        <div className="flex justify-between items-center">
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={handleBackToAssessments}
+            className="px-8 py-4 border-2 border-pink-500/30 text-pink-500 rounded-xl font-semibold text-lg hover:bg-pink-500 hover:text-white transition-all duration-300"
+          >
+            Back to Assessments
+          </motion.button>
+
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={handleSaveAndContinue}
+            disabled={isSaving}
+            className="px-8 py-4 bg-gradient-to-r from-pink-500 to-pink-600 text-white rounded-xl font-semibold text-lg shadow-lg hover:shadow-pink-500/25 transition-all duration-300 disabled:opacity-50"
+          >
+            {isSaving ? 'Saving...' : 'Save & Continue'}
+          </motion.button>
+        </div>
       </div>
     </div>
   );

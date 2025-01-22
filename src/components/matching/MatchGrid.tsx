@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { SmartMatch } from '../../types';
 import { Heart, Users, MapPin, Calendar, Clock, Star, MessageCircle, RefreshCw } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
+import aiProfileService from '../../services/aiProfileService';
 
 interface Props {
   matches: SmartMatch[];
@@ -18,12 +19,41 @@ const MatchGrid: React.FC<Props> = ({
   onViewProfile,
   refreshing
 }) => {
+  const [aiGeneratedImages, setAiGeneratedImages] = useState<Record<string, string>>({});
+  const [generatingImages, setGeneratingImages] = useState<Record<string, boolean>>({});
+
+  useEffect(() => {
+    const generateMissingProfileImages = async () => {
+      for (const match of matches) {
+        if (!match.profile.profile_image && !aiGeneratedImages[match.profile.id]) {
+          try {
+            setGeneratingImages(prev => ({ ...prev, [match.profile.id]: true }));
+            
+            const imageUrl = await aiProfileService.generateAIProfileImage({
+              gender: match.profile.gender || 'male',
+              age: match.profile.age || 25,
+              style: 'professional'
+            });
+            
+            setAiGeneratedImages(prev => ({ ...prev, [match.profile.id]: imageUrl }));
+          } catch (error) {
+            console.error('Error generating profile image:', error);
+          } finally {
+            setGeneratingImages(prev => ({ ...prev, [match.profile.id]: false }));
+          }
+        }
+      }
+    };
+
+    generateMissingProfileImages();
+  }, [matches]);
+
   if (matches.length === 0) {
     return (
       <div className="bg-white rounded-lg shadow-lg p-8 text-center max-w-2xl mx-auto">
         <div className="animate-pulse">
-          <div className="w-16 h-16 bg-indigo-100 rounded-full mx-auto mb-4 flex items-center justify-center">
-            <Users className="w-8 h-8 text-indigo-600" />
+          <div className="w-16 h-16 bg-pink-100 rounded-full mx-auto mb-4 flex items-center justify-center">
+            <Users className="w-8 h-8 text-pink-500" />
           </div>
         </div>
         <p className="text-gray-600 text-lg">No matches found yet. Complete your profile to start matching!</p>
@@ -39,17 +69,24 @@ const MatchGrid: React.FC<Props> = ({
           className="group bg-white rounded-xl shadow-lg overflow-hidden transform transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl"
         >
           <div className="relative">
-            {match.profile.profile_image ? (
+            {match.profile.profile_image || aiGeneratedImages[match.profile.id] ? (
               <img
-                src={match.profile.profile_image}
+                src={match.profile.profile_image || aiGeneratedImages[match.profile.id]}
                 alt={match.profile.fullname || 'Profile'}
                 className="w-full h-72 object-cover transition-transform duration-300 group-hover:scale-105"
               />
             ) : (
-              <div className="w-full h-72 bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center transition-transform duration-300 group-hover:scale-105">
-                <span className="text-5xl font-bold text-white">
-                  {(match.profile.fullname || 'Anonymous').charAt(0)}
-                </span>
+              <div className="w-full h-72 bg-gradient-to-br from-pink-400 via-pink-500 to-rose-500 flex items-center justify-center transition-transform duration-300 group-hover:scale-105">
+                {generatingImages[match.profile.id] ? (
+                  <div className="animate-pulse flex flex-col items-center">
+                    <div className="w-16 h-16 bg-white/20 rounded-full mb-2"></div>
+                    <p className="text-white text-sm">Generating...</p>
+                  </div>
+                ) : (
+                  <span className="text-5xl font-bold text-white">
+                    {(match.profile.fullname || 'Anonymous').charAt(0)}
+                  </span>
+                )}
               </div>
             )}
             
@@ -75,7 +112,7 @@ const MatchGrid: React.FC<Props> = ({
                     {match.profile.fullname || 'Anonymous'}
                   </h3>
                   <p className="text-white/90 text-sm">
-                    CUPID ID: {match.profile.cupid_id}
+                    {match.profile.cupid_id}
                   </p>
                 </div>
                 <div className="flex items-center gap-2">
@@ -85,7 +122,7 @@ const MatchGrid: React.FC<Props> = ({
                     className={`p-2 rounded-full transition-all duration-300 transform hover:scale-110 
                       ${refreshing === match.profile.user_id 
                         ? 'bg-gray-400/90 cursor-not-allowed' 
-                        : 'bg-white/90 backdrop-blur-sm text-indigo-600 hover:bg-indigo-100'} 
+                        : 'bg-white/90 backdrop-blur-sm text-pink-500 hover:bg-pink-100'} 
                       shadow-lg`}
                     title="Refresh compatibility analysis"
                   >
@@ -93,7 +130,7 @@ const MatchGrid: React.FC<Props> = ({
                       className={`w-4 h-4 ${refreshing === match.profile.user_id ? 'animate-spin' : ''}`} 
                     />
                   </button>
-                  <span className="px-4 py-2 bg-indigo-600/90 backdrop-blur-sm text-white rounded-full text-sm font-semibold">
+                  <span className="px-5 py-2.5 bg-pink-500/90 backdrop-blur-sm text-white rounded-full font-bold text-lg">
                     {Math.round(match.compatibility_score)}% Match
                   </span>
                 </div>
@@ -104,13 +141,13 @@ const MatchGrid: React.FC<Props> = ({
           <div className="p-6">
             <div className="grid grid-cols-2 gap-4 mb-6">
               {match.profile.location && (
-                <div className="flex items-center text-gray-600 group-hover:text-indigo-600 transition-colors">
+                <div className="flex items-center text-gray-600 group-hover:text-pink-500 transition-colors">
                   <MapPin className="w-5 h-5 mr-2" />
                   <span className="text-sm">{match.profile.location}</span>
                 </div>
               )}
               {match.profile.age && (
-                <div className="flex items-center text-gray-600 group-hover:text-indigo-600 transition-colors">
+                <div className="flex items-center text-gray-600 group-hover:text-pink-500 transition-colors">
                   <Calendar className="w-5 h-5 mr-2" />
                   <span className="text-sm">{match.profile.age} years</span>
                 </div>
@@ -131,7 +168,7 @@ const MatchGrid: React.FC<Props> = ({
                   {match.profile.interests.map((interest, index) => (
                     <span
                       key={index}
-                      className="px-3 py-1 bg-indigo-50 text-indigo-600 rounded-full text-xs"
+                      className="px-3 py-1 bg-pink-50 text-pink-500 rounded-full text-xs"
                     >
                       {interest}
                     </span>
@@ -152,7 +189,7 @@ const MatchGrid: React.FC<Props> = ({
               </div>
               <div className="space-y-2">
                 {match.compatibility_details.strengths.slice(0, 2).map((strength, index) => (
-                  <div key={index} className="flex items-center text-sm text-gray-600 group-hover:text-indigo-600 transition-colors">
+                  <div key={index} className="flex items-center text-sm text-gray-600 group-hover:text-pink-500 transition-colors">
                     <Star className="w-5 h-5 mr-2 text-yellow-500" />
                     <span>{strength}</span>
                   </div>
@@ -163,7 +200,7 @@ const MatchGrid: React.FC<Props> = ({
             <div className="flex justify-between gap-4">
               <button
                 onClick={() => onViewProfile(match)}
-                className="flex-1 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-all duration-300 transform hover:scale-105 flex items-center justify-center shadow-md hover:shadow-lg"
+                className="flex-1 px-4 py-2 bg-pink-500 text-white rounded-lg hover:bg-pink-600 transition-all duration-300 transform hover:scale-105 flex items-center justify-center shadow-md hover:shadow-lg"
               >
                 <Users className="w-4 h-4 mr-2" />
                 View Insights

@@ -5,23 +5,26 @@ import { Heart, Brain, Shield } from 'lucide-react';
 import couple1 from '../assets/images/couple1.jpg';
 import couple2 from '../assets/images/couple2.jpg';
 import couple3 from '../assets/images/couple3.jpg';
+import { useTheme } from '../contexts/ThemeContext';
 
 const HeroSection: React.FC = () => {
   const navigate = useNavigate();
+  const { setTheme } = useTheme();
 
-  const handleGenderSelect = (gender: string) => {
-    localStorage.setItem('selectedGender', gender);
+  const handleGenderSelect = (gender: 'male' | 'female') => {
+    setTheme(gender);
+    localStorage.setItem('gender-theme', gender);
     navigate('/login');
   };
 
   return (
-    <div className="min-h-screen bg-pink-50">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white">
       <div className="container mx-auto px-4 py-16 flex flex-col lg:flex-row items-center justify-between">
         {/* Left side - Original Content */}
         <div className="lg:w-1/2 mb-12 lg:mb-0">
           <h1 className="text-5xl lg:text-6xl font-bold mb-6">
             Find your soulmate
-            <div className="text-pink-500">with AI precision</div>
+            <div className="bg-gradient-to-r from-purple-600 to-pink-500 bg-clip-text text-transparent">with AI precision</div>
           </h1>
           
           <p className="text-xl text-gray-600 mb-8">
@@ -32,13 +35,13 @@ const HeroSection: React.FC = () => {
           <div className="flex flex-wrap gap-4 mb-8">
             <button 
               onClick={() => handleGenderSelect('male')}
-              className="px-8 py-3 bg-pink-500 text-white rounded-full font-semibold hover:bg-pink-600 transition-all"
+              className="px-8 py-3 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-full font-semibold hover:from-blue-600 hover:to-indigo-600 transition-all transform hover:scale-105 shadow-lg hover:shadow-xl"
             >
               I am a Man →
             </button>
             <button 
               onClick={() => handleGenderSelect('female')}
-              className="px-8 py-3 bg-pink-500 text-white rounded-full font-semibold hover:bg-pink-600 transition-all"
+              className="px-8 py-3 bg-gradient-to-r from-pink-500 to-rose-500 text-white rounded-full font-semibold hover:from-pink-600 hover:to-rose-600 transition-all transform hover:scale-105 shadow-lg hover:shadow-xl"
             >
               I am a Woman →
             </button>

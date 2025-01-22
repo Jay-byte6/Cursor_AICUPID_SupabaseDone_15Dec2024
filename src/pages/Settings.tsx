@@ -12,11 +12,16 @@ const Settings = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
-  const [notificationSettings, setNotificationSettings] = useState({
-    new_matches: true,
+  const [settings, setSettings] = useState({
+    newMatches: true,
     messages: true,
-    profile_views: true,
-    email_notifications: true
+    profileViews: true,
+    emailNotifications: true,
+    profileVisibility: true,
+    smartMatching: true,
+    profilePicture: true,
+    occupation: true,
+    contactInformation: true
   });
 
   useEffect(() => {
@@ -44,11 +49,16 @@ const Settings = () => {
     try {
       const profile = await profileService.getUserProfile(user.id);
       if (profile?.notification_preferences) {
-        setNotificationSettings({
-          new_matches: profile.notification_preferences.new_match ?? true,
+        setSettings({
+          newMatches: profile.notification_preferences.new_match ?? true,
           messages: profile.notification_preferences.new_message ?? true,
-          profile_views: profile.notification_preferences.profile_view ?? true,
-          email_notifications: profile.notification_preferences.email_notifications ?? true
+          profileViews: profile.notification_preferences.profile_view ?? true,
+          emailNotifications: profile.notification_preferences.email_notifications ?? true,
+          profileVisibility: profile.notification_preferences.profile_visibility ?? true,
+          smartMatching: profile.notification_preferences.smart_matching ?? true,
+          profilePicture: profile.notification_preferences.profile_picture ?? true,
+          occupation: profile.notification_preferences.occupation ?? true,
+          contactInformation: profile.notification_preferences.contact_information ?? true
         });
       }
     } catch (err: any) {
@@ -57,8 +67,8 @@ const Settings = () => {
     }
   };
 
-  const handleToggle = (setting: keyof typeof notificationSettings) => {
-    setNotificationSettings(prev => ({
+  const handleToggle = (setting: keyof typeof settings) => {
+    setSettings(prev => ({
       ...prev,
       [setting]: !prev[setting]
     }));
@@ -71,10 +81,15 @@ const Settings = () => {
       setError(null);
 
       await profileService.updateNotificationPreferences(user.id, {
-        new_match: notificationSettings.new_matches,
-        new_message: notificationSettings.messages,
-        profile_view: notificationSettings.profile_views,
-        email_notifications: notificationSettings.email_notifications
+        new_match: settings.newMatches,
+        new_message: settings.messages,
+        profile_view: settings.profileViews,
+        email_notifications: settings.emailNotifications,
+        profile_visibility: settings.profileVisibility,
+        smart_matching: settings.smartMatching,
+        profile_picture: settings.profilePicture,
+        occupation: settings.occupation,
+        contact_information: settings.contactInformation
       });
 
       // Show success message or toast
@@ -118,11 +133,11 @@ const Settings = () => {
 
       // Determine which type of notification to send based on settings
       let notificationType = 'NEW_MATCH';
-      if (notificationSettings.messages) {
+      if (settings.messages) {
         notificationType = 'NEW_MESSAGE';
-      } else if (notificationSettings.profile_views) {
+      } else if (settings.profileViews) {
         notificationType = 'PROFILE_VIEW';
-      } else if (notificationSettings.new_matches) {
+      } else if (settings.newMatches) {
         notificationType = 'NEW_MATCH';
       }
 
@@ -170,132 +185,225 @@ const Settings = () => {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-2xl font-bold text-gray-900 mb-8">Settings</h1>
-      <p className="text-gray-600 mb-8">Manage your account settings and preferences</p>
+    <div className="min-h-screen bg-white">
+      <div className="container mx-auto px-8 py-12 ml-[260px] relative z-10">
+        <div className="max-w-3xl">
+          <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-pink-500 to-pink-600 bg-clip-text text-transparent">
+            Settings
+          </h1>
+          <p className="text-lg text-gray-600 mb-8">
+            Manage your account settings and preferences
+          </p>
 
-      {error && <ErrorAlert message={error} onClose={() => setError(null)} />}
+          {error && <ErrorAlert message={error} onClose={() => setError(null)} />}
 
-      <div className="space-y-8">
-        {/* Notifications Section */}
-        <div className="bg-white rounded-xl shadow-lg p-6">
-          <h2 className="text-xl font-bold text-gray-900 mb-6">Notification Settings</h2>
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="font-medium">New Matches</div>
-                <div className="text-sm text-gray-500">Get notified when you have new compatible matches</div>
+          <div className="space-y-8">
+            {/* Notification Settings */}
+            <div className="bg-white rounded-xl shadow-lg p-8 mb-8 relative z-20">
+              <h2 className="text-2xl font-semibold mb-6">Notification Settings</h2>
+              <div className="space-y-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-lg font-medium text-gray-900">New Matches</h3>
+                    <p className="text-gray-500">Get notified when you have new compatible matches</p>
+                  </div>
+                  <div className="relative">
+                    <label className="flex items-center cursor-pointer">
+                      <input
+                        type="checkbox"
+                        className="sr-only peer"
+                        checked={settings.newMatches}
+                        onChange={(e) => handleToggle('newMatches')}
+                      />
+                      <div className="w-14 h-7 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-pink-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-pink-600"></div>
+                    </label>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-lg font-medium text-gray-900">Messages</h3>
+                    <p className="text-gray-500">Receive notifications for new messages</p>
+                  </div>
+                  <div className="relative">
+                    <label className="flex items-center cursor-pointer">
+                      <input
+                        type="checkbox"
+                        className="sr-only peer"
+                        checked={settings.messages}
+                        onChange={(e) => handleToggle('messages')}
+                      />
+                      <div className="w-14 h-7 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-pink-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-pink-600"></div>
+                    </label>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-lg font-medium text-gray-900">Profile Views</h3>
+                    <p className="text-gray-500">Get notified when someone views your profile</p>
+                  </div>
+                  <div className="relative">
+                    <label className="flex items-center cursor-pointer">
+                      <input
+                        type="checkbox"
+                        className="sr-only peer"
+                        checked={settings.profileViews}
+                        onChange={(e) => handleToggle('profileViews')}
+                      />
+                      <div className="w-14 h-7 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-pink-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-pink-600"></div>
+                    </label>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-lg font-medium text-gray-900">Email Notifications</h3>
+                    <p className="text-gray-500">Receive email notifications for important updates</p>
+                  </div>
+                  <div className="relative">
+                    <label className="flex items-center cursor-pointer">
+                      <input
+                        type="checkbox"
+                        className="sr-only peer"
+                        checked={settings.emailNotifications}
+                        onChange={(e) => handleToggle('emailNotifications')}
+                      />
+                      <div className="w-14 h-7 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-pink-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-pink-600"></div>
+                    </label>
+                  </div>
+                </div>
               </div>
-              <button
-                onClick={() => handleToggle('new_matches')}
-                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                  notificationSettings.new_matches ? 'bg-indigo-600' : 'bg-gray-200'
-                }`}
-              >
-                <span
-                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                    notificationSettings.new_matches ? 'translate-x-6' : 'translate-x-1'
-                  }`}
-                />
-              </button>
             </div>
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="font-medium">Messages</div>
-                <div className="text-sm text-gray-500">Receive notifications for new messages</div>
+
+            {/* Privacy Settings */}
+            <div className="bg-white rounded-xl shadow-lg p-8 relative z-20">
+              <h2 className="text-2xl font-semibold mb-6">Privacy Settings</h2>
+              <div className="space-y-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-lg font-medium text-gray-900">Profile Visibility</h3>
+                    <p className="text-gray-500">Control who can see your profile and what information is visible</p>
+                  </div>
+                  <div className="relative z-10">
+                    <label className="flex items-center cursor-pointer">
+                      <input
+                        type="checkbox"
+                        className="sr-only peer"
+                        checked={settings.profileVisibility}
+                        onChange={(e) => handleToggle('profileVisibility')}
+                      />
+                      <div className="w-14 h-7 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-pink-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-pink-600"></div>
+                    </label>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-lg font-medium text-gray-900">Smart Matching</h3>
+                    <p className="text-gray-500">Allow others to find you through smart matching</p>
+                  </div>
+                  <div className="relative z-10">
+                    <label className="flex items-center cursor-pointer">
+                      <input
+                        type="checkbox"
+                        className="sr-only peer"
+                        checked={settings.smartMatching}
+                        onChange={(e) => handleToggle('smartMatching')}
+                      />
+                      <div className="w-14 h-7 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-pink-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-pink-600"></div>
+                    </label>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-lg font-medium text-gray-900">Profile Picture</h3>
+                    <p className="text-gray-500">Show your profile picture to other users</p>
+                  </div>
+                  <div className="relative z-10">
+                    <label className="flex items-center cursor-pointer">
+                      <input
+                        type="checkbox"
+                        className="sr-only peer"
+                        checked={settings.profilePicture}
+                        onChange={(e) => handleToggle('profilePicture')}
+                      />
+                      <div className="w-14 h-7 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-pink-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-pink-600"></div>
+                    </label>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-lg font-medium text-gray-900">Occupation</h3>
+                    <p className="text-gray-500">Display your occupation on your profile</p>
+                  </div>
+                  <div className="relative z-10">
+                    <label className="flex items-center cursor-pointer">
+                      <input
+                        type="checkbox"
+                        className="sr-only peer"
+                        checked={settings.occupation}
+                        onChange={(e) => handleToggle('occupation')}
+                      />
+                      <div className="w-14 h-7 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-pink-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-pink-600"></div>
+                    </label>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-lg font-medium text-gray-900">Contact Information</h3>
+                    <p className="text-gray-500">Allow others to see your contact information</p>
+                  </div>
+                  <div className="relative z-10">
+                    <label className="flex items-center cursor-pointer">
+                      <input
+                        type="checkbox"
+                        className="sr-only peer"
+                        checked={settings.contactInformation}
+                        onChange={(e) => handleToggle('contactInformation')}
+                      />
+                      <div className="w-14 h-7 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-pink-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-pink-600"></div>
+                    </label>
+                  </div>
+                </div>
               </div>
-              <button
-                onClick={() => handleToggle('messages')}
-                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                  notificationSettings.messages ? 'bg-indigo-600' : 'bg-gray-200'
-                }`}
-              >
-                <span
-                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                    notificationSettings.messages ? 'translate-x-6' : 'translate-x-1'
-                  }`}
-                />
-              </button>
-            </div>
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="font-medium">Profile Views</div>
-                <div className="text-sm text-gray-500">Get notified when someone views your profile</div>
-              </div>
-              <button
-                onClick={() => handleToggle('profile_views')}
-                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                  notificationSettings.profile_views ? 'bg-indigo-600' : 'bg-gray-200'
-                }`}
-              >
-                <span
-                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                    notificationSettings.profile_views ? 'translate-x-6' : 'translate-x-1'
-                  }`}
-                />
-              </button>
-            </div>
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="font-medium">Email Notifications</div>
-                <div className="text-sm text-gray-500">Receive email notifications for important updates</div>
-              </div>
-              <button
-                onClick={() => handleToggle('email_notifications')}
-                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                  notificationSettings.email_notifications ? 'bg-indigo-600' : 'bg-gray-200'
-                }`}
-              >
-                <span
-                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                    notificationSettings.email_notifications ? 'translate-x-6' : 'translate-x-1'
-                  }`}
-                />
-              </button>
-            </div>
-            <div className="mt-6 flex space-x-4">
-              <button
-                onClick={saveSettings}
-                disabled={isSaving}
-                className={`px-4 py-2 text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm`}
-              >
-                {isSaving ? 'Saving...' : 'Save Changes'}
-              </button>
-              {process.env.NODE_ENV === 'development' && (
-                <button
-                  onClick={testNotification}
-                  className="px-4 py-2 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 text-sm"
-                >
-                  Test Notification
-                </button>
-              )}
             </div>
           </div>
-        </div>
 
-        {/* Visibility Section */}
-        <VisibilitySettings
-          userProfile={userProfile}
-          onUpdate={(updatedProfile) => setUserProfile(updatedProfile)}
-        />
-
-        {/* Privacy Section */}
-        <div className="bg-white rounded-xl shadow-lg p-6">
-          <h2 className="text-xl font-bold text-gray-900 mb-6">Privacy Settings</h2>
-          <p className="text-gray-500">Privacy settings coming soon...</p>
-        </div>
-
-        {/* Delete Account Section */}
-        <div className="bg-white rounded-xl shadow-lg p-6">
-          <h2 className="text-xl font-bold text-red-600 mb-6">Delete Account</h2>
-          <p className="text-gray-500 mb-4">Once you delete your account, there is no going back. Please be certain.</p>
-          <button className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">
-            Delete Account
-          </button>
+          <div className="mt-8 flex space-x-4 relative z-20">
+            <button
+              onClick={saveSettings}
+              disabled={isSaving}
+              className="px-6 py-3 bg-pink-600 text-white rounded-lg hover:bg-pink-700 disabled:opacity-50 disabled:cursor-not-allowed font-medium"
+            >
+              {isSaving ? 'Saving...' : 'Save Changes'}
+            </button>
+            <button
+              onClick={testNotification}
+              className="px-6 py-3 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 font-medium"
+            >
+              Test Notification
+            </button>
+          </div>
         </div>
       </div>
     </div>
   );
+};
+
+// Helper function to get setting descriptions
+const getSettingDescription = (key: string): string => {
+  const descriptions: Record<string, string> = {
+    profileVisibility: 'Control who can see your profile and what information is visible',
+    smartMatching: 'Allow others to find you through smart matching',
+    profilePicture: 'Show your profile picture to other users',
+    occupation: 'Display your occupation on your profile',
+    contactInformation: 'Allow others to see your contact information'
+  };
+  return descriptions[key] || '';
 };
 
 export default Settings; 
